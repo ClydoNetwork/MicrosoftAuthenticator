@@ -1,3 +1,23 @@
+/*
+ * This file is part of MicrosoftAuthenticator.
+ *
+ * MicrosoftAuthenticator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * MicrosoftAuthenticator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MicrosoftAuthenticator.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2024 ClydoNetwork
+ */
+
 package net.clydo.msa.util;
 
 import lombok.experimental.UtilityClass;
@@ -66,7 +86,7 @@ public class MicrosoftAPI {
      */
     public MicrosoftAccount acquireMicrosoftAccount(
             @NotNull MicrosoftAuthenticator authenticator,
-            @NotNull AuthResult.Builder resultBuilder,
+            @NotNull AuthResult.AuthResultBuilder resultBuilder,
             String code
     ) {
         // Set the phase to acquiring Microsoft account
@@ -105,7 +125,7 @@ public class MicrosoftAPI {
      */
     public MicrosoftAccount refreshToken(
             @NotNull MicrosoftAuthenticator authenticator,
-            @NotNull AuthResult.Builder resultBuilder,
+            @NotNull AuthResult.AuthResultBuilder resultBuilder,
             String refreshToken
     ) {
         // Set the phase to acquiring Microsoft account
@@ -143,7 +163,7 @@ public class MicrosoftAPI {
      */
     public XBLToken acquireXBLToken(
             @NotNull MicrosoftAuthenticator authenticator,
-            @NotNull AuthResult.Builder resultBuilder,
+            @NotNull AuthResult.AuthResultBuilder resultBuilder,
             String accessToken
     ) {
         // Set the phase to acquiring XBL token
@@ -184,7 +204,7 @@ public class MicrosoftAPI {
      */
     public XSTSToken acquireXSTSToken(
             @NotNull MicrosoftAuthenticator authenticator,
-            @NotNull AuthResult.Builder resultBuilder,
+            @NotNull AuthResult.AuthResultBuilder resultBuilder,
             String xblToken
     ) {
         // Set the phase to acquiring XSTS token

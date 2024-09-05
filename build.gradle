@@ -21,6 +21,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 group = 'net.clydo.msa'
@@ -43,6 +44,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.11.0'
 
     implementation 'org.apache.commons:commons-lang3:3.17.0'
+
+    implementation 'org.openjfx:javafx-swing:21.0.4'
+    implementation 'org.openjfx:javafx-web:21.0.4'
 }
 
 java {
@@ -61,4 +65,9 @@ publishing {
 wrapper {
     gradleVersion = "8.8"
     distributionType = Wrapper.DistributionType.ALL
+}
+
+javafx {
+    version = "21.0.4"
+    modules = ['javafx.swing', 'javafx.web']
 }

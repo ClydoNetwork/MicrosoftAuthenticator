@@ -15,6 +15,8 @@ This class supports:
 - **Token Management**: Refreshes tokens and handles token expiration.
 - **Minecraft Integration**: Validates ownership and acquires Minecraft tokens.
 
+## [Installation](https://jitpack.io/#ClydoNetwork/MicrosoftAuthenticator)
+
 ## Dependencies
 
 - **Google Gson**: For JSON serialization and deserialization.
@@ -40,14 +42,14 @@ import java.util.concurrent.CompletableFuture;
 public class AuthExample {
     public static void main(String[] args) {
         MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
-        
+
         // Configure the authentication options
         AuthenticatorOptions options = AuthenticatorOptions.builder()
                 .title("Microsoft Authentication")
                 .width(800)
                 .height(600)
                 .build();
-        
+
         // Start the authentication process
         CompletableFuture<AuthResult> authFuture = authenticator.asyncWebview(options);
 

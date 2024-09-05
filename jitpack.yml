@@ -1,5 +1,5 @@
 jdk:
-  - openjdk17
+  version: 17
 env:
   GROUP: net.clydo.msa
   ARTIFACT: MicrosoftAuthenticator
