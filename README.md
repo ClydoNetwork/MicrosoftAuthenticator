@@ -15,6 +15,8 @@ This class supports:
 - **Token Management**: Refreshes tokens and handles token expiration.
 - **Minecraft Integration**: Validates ownership and acquires Minecraft tokens.
 
+## [Installation](https://jitpack.io/#ClydoNetwork/MicrosoftAuthenticator)
+
 ## Dependencies
 
 - **Google Gson**: For JSON serialization and deserialization.
