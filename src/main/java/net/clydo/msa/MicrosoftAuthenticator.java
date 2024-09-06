@@ -236,7 +236,7 @@ public class MicrosoftAuthenticator {
             }
         }
 
-        // get real XSTS token we need
+        // get XSTS token for we need
         xstsToken = MicrosoftAPI.acquireXSTSToken(this, resultBuilder, xblToken.token(), "http://xboxlive.com");
         if (xstsToken == null) {
             return;
