@@ -220,7 +220,7 @@ public class MicrosoftAPI {
                                 "SandboxId", "RETAIL",
                                 "UserTokens", List.of(xblToken)
                         ),
-                        "RelyingParty", "rp://api.minecraftservices.com/",
+                        "RelyingParty", "http://xboxlive.com",
                         "TokenType", "JWT"
                 ),
                 XSTSToken.class,

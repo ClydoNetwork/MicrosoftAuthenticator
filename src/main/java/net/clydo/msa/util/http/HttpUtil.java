@@ -111,6 +111,7 @@ public class HttpUtil {
 
             val requestBuilder = HttpRequest.newBuilder(uri)
                     .header("Content-Type", contentType.toString())
+                    .header("X-Xbl-Contract-Version", "2")
                     .header("Accept", acceptType.toString());
 
             val bodyPublisher = createBodyPublisher(contentType, data);
@@ -200,11 +201,11 @@ public class HttpUtil {
     /**
      * Serializes the HTTP response to the expected response class.
      *
-     * @param response    The HTTP response received from the server.
-     * @param valueClass  The class of the expected successful response body.
-     * @param errorClass  The class of the expected error response body.
-     * @param <V>         The type of the successful response.
-     * @param <E>         The type of the error response.
+     * @param response   The HTTP response received from the server.
+     * @param valueClass The class of the expected successful response body.
+     * @param errorClass The class of the expected error response body.
+     * @param <V>        The type of the successful response.
+     * @param <E>        The type of the error response.
      * @return The deserialized response body of the successful response.
      * @throws MicrosoftAuthenticatorException if an error response is received.
      */
