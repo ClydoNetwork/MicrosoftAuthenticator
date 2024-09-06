@@ -21,6 +21,8 @@
 package net.clydo.msa;
 
 import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -32,9 +34,12 @@ import net.clydo.msa.util.http.Cookies;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
@@ -56,6 +61,38 @@ public class MicrosoftAuthenticator {
     // Current phase of the authentication process
     @Nullable
     private Phase phase = null;
+
+    public CompletableFuture<AuthResult> asyncExternal() {
+        val resultBuilder = AuthResult.builder();
+        this.setPhase(Phase.OPEN_LOGIN_PAGE);
+
+        val future = new CompletableFuture<AuthResult>();
+
+        // Generate the authorization URL
+        val authorizeUrl = MicrosoftAPI.authorizeUrl();
+        System.out.println("authorizeUrl:\n" + authorizeUrl);
+
+
+        CompletableFuture.runAsync(() -> {
+            Scanner scanner = new Scanner(System.in);
+            String code = scanner.nextLine();
+            System.out.println("receive code...");
+            try {
+                // Acquire Microsoft account and start authentication
+                val microsoftToken = MicrosoftAPI.acquireMicrosoftAccount(this, resultBuilder, code);
+                if (microsoftToken != null) {
+                    this.authenticateByMSA(resultBuilder, microsoftToken.accessToken());
+                }
+
+                // Complete the authentication process
+                future.complete(resultBuilder.build());
+            } catch (Throwable throwable) {
+                future.completeExceptionally(throwable);
+            }
+        });
+
+        return future;
+    }
 
     /**
      * Initiates the authentication process by opening a webview for the user to log in.
