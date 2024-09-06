@@ -78,9 +78,9 @@ public class MicrosoftAPI {
     /**
      * Acquires a Microsoft account by exchanging an authorization code for an access token.
      *
-     * @param authenticator   The MicrosoftAuthenticator instance to manage the authentication flow.
-     * @param resultBuilder   The builder for constructing the authentication result.
-     * @param code            The authorization code obtained from the authorization URL.
+     * @param authenticator The MicrosoftAuthenticator instance to manage the authentication flow.
+     * @param resultBuilder The builder for constructing the authentication result.
+     * @param code          The authorization code obtained from the authorization URL.
      * @return A {@link MicrosoftAccount} representing the acquired Microsoft account information.
      * @throws MicrosoftAuthenticatorException if the token acquisition fails.
      */
@@ -117,9 +117,9 @@ public class MicrosoftAPI {
     /**
      * Refreshes the Microsoft account by using a refresh token to obtain a new access token.
      *
-     * @param authenticator   The MicrosoftAuthenticator instance to manage the authentication flow.
-     * @param resultBuilder   The builder for constructing the authentication result.
-     * @param refreshToken    The refresh token used to obtain a new access token.
+     * @param authenticator The MicrosoftAuthenticator instance to manage the authentication flow.
+     * @param resultBuilder The builder for constructing the authentication result.
+     * @param refreshToken  The refresh token used to obtain a new access token.
      * @return A {@link MicrosoftAccount} representing the refreshed Microsoft account information.
      * @throws MicrosoftAuthenticatorException if the token refresh fails.
      */
@@ -155,9 +155,9 @@ public class MicrosoftAPI {
     /**
      * Acquires an Xbox Live (XBL) token using the Microsoft access token.
      *
-     * @param authenticator   The MicrosoftAuthenticator instance to manage the authentication flow.
-     * @param resultBuilder   The builder for constructing the authentication result.
-     * @param accessToken     The Microsoft access token used to obtain the XBL token.
+     * @param authenticator The MicrosoftAuthenticator instance to manage the authentication flow.
+     * @param resultBuilder The builder for constructing the authentication result.
+     * @param accessToken   The Microsoft access token used to obtain the XBL token.
      * @return An {@link XBLToken} representing the acquired Xbox Live token.
      * @throws MicrosoftAuthenticatorException if the XBL token acquisition fails.
      */
@@ -196,9 +196,9 @@ public class MicrosoftAPI {
     /**
      * Acquires an XSTS token using the XBL token.
      *
-     * @param authenticator   The MicrosoftAuthenticator instance to manage the authentication flow.
-     * @param resultBuilder   The builder for constructing the authentication result.
-     * @param xblToken        The XBL token used to obtain the XSTS token.
+     * @param authenticator The MicrosoftAuthenticator instance to manage the authentication flow.
+     * @param resultBuilder The builder for constructing the authentication result.
+     * @param xblToken      The XBL token used to obtain the XSTS token.
      * @return An {@link XSTSToken} representing the acquired XSTS token.
      * @throws MicrosoftAuthenticatorException if the XSTS token acquisition fails.
      */
@@ -206,6 +206,15 @@ public class MicrosoftAPI {
             @NotNull MicrosoftAuthenticator authenticator,
             @NotNull AuthResult.AuthResultBuilder resultBuilder,
             String xblToken
+    ) {
+        return acquireXSTSToken(authenticator, resultBuilder, xblToken, "rp://api.minecraftservices.com/");
+    }
+
+    public XSTSToken acquireXSTSToken(
+            @NotNull MicrosoftAuthenticator authenticator,
+            @NotNull AuthResult.AuthResultBuilder resultBuilder,
+            String xblToken,
+            String relyingParty
     ) {
         // Set the phase to acquiring XSTS token
         authenticator.setPhase(Phase.ACQUIRE_XSTS_TOKEN);
@@ -220,7 +229,7 @@ public class MicrosoftAPI {
                                 "SandboxId", "RETAIL",
                                 "UserTokens", List.of(xblToken)
                         ),
-                        "RelyingParty", "http://xboxlive.com",
+                        "RelyingParty", relyingParty,
                         "TokenType", "JWT"
                 ),
                 XSTSToken.class,

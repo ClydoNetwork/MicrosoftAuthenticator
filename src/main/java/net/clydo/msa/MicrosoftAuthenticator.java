@@ -217,7 +217,7 @@ public class MicrosoftAuthenticator {
         }
 
         // Acquire XSTS token using the XBL token
-        val xstsToken = MicrosoftAPI.acquireXSTSToken(this, resultBuilder, xblToken.token());
+        var xstsToken = MicrosoftAPI.acquireXSTSToken(this, resultBuilder, xblToken.token());
         if (xstsToken == null) {
             return;
         }
@@ -234,6 +234,12 @@ public class MicrosoftAuthenticator {
             if (Arrays.stream(minecraftStore.items()).noneMatch(item -> item.name().equals("game_minecraft"))) {
                 throw new MicrosoftAuthenticatorException("Player didn't buy Minecraft Java Edition or did not migrate its account");
             }
+        }
+
+        // get real XSTS token we need
+        xstsToken = MicrosoftAPI.acquireXSTSToken(this, resultBuilder, xblToken.token(), "http://xboxlive.com");
+        if (xstsToken == null) {
+            return;
         }
 
         // Acquire Minecraft profile information
