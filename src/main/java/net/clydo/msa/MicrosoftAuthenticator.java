@@ -64,7 +64,6 @@ public class MicrosoftAuthenticator {
      * @return A CompletableFuture containing the authentication result.
      */
     public CompletableFuture<AuthResult> asyncWebview(AuthenticatorOptions authenticatorOptions) {
-        val resultBuilder = AuthResult.builder();
         this.setPhase(Phase.OPEN_LOGIN_PAGE);
 
         val future = new CompletableFuture<AuthResult>();
@@ -82,18 +81,11 @@ public class MicrosoftAuthenticator {
             webFrame.get()
                     .start(authorizeUrl)
                     .thenAcceptAsync(code -> {
-                        try {
-                            // Acquire Microsoft account and start authentication
-                            val microsoftToken = MicrosoftAPI.acquireMicrosoftAccount(this, resultBuilder, code);
-                            if (microsoftToken != null) {
-                                this.authenticateByMSA(resultBuilder, microsoftToken.accessToken());
-                            }
+                        // Acquire Microsoft account and start authentication
+                        val authResult = this.syncCode(code);
 
-                            // Complete the authentication process
-                            future.complete(resultBuilder.build());
-                        } catch (Throwable throwable) {
-                            future.completeExceptionally(throwable);
-                        }
+                        // Complete the authentication process
+                        future.complete(authResult);
                     }).exceptionally(throwable -> {
                         // Handle exceptions during the webview process
                         future.completeExceptionally(throwable instanceof MicrosoftAuthenticatorException exception ? exception : throwable);
@@ -113,6 +105,53 @@ public class MicrosoftAuthenticator {
     }
 
     /**
+     * Retrieves the authorization URL used to initiate the Microsoft authentication flow.
+     * This URL is used to open a webview for the user to log in with their Microsoft account.
+     *
+     * @return The Microsoft authorization URL.
+     */
+    public String getAuthorizeUrl() {
+        return MicrosoftAPI.authorizeUrl();
+    }
+
+    /**
+     * Initiates the authentication process asynchronously using the provided authorization code.
+     * The operation is performed asynchronously and returns a CompletableFuture.
+     *
+     * @param code The authorization code returned from the login page.
+     * @return A CompletableFuture containing the authentication result.
+     * @throws MicrosoftAuthenticatorException If an error occurs during authentication.
+     */
+    public CompletableFuture<AuthResult> asyncCode(String code) {
+        return CompletableFuture.supplyAsync(() -> {
+            // Acquire Microsoft account and start authentication
+            // Complete the authentication process
+            return this.syncCode(code);
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the token-based authentication process
+            throw throwable instanceof MicrosoftAuthenticatorException ? (MicrosoftAuthenticatorException) throwable : new RuntimeException(throwable);
+        });
+    }
+
+    /**
+     * Performs the authentication process synchronously using the provided authorization code.
+     *
+     * @param code The authorization code returned from the login page.
+     * @return The authentication result containing the user's access tokens and Minecraft profile.
+     * @throws MicrosoftAuthenticatorException If an error occurs during authentication.
+     */
+    public AuthResult syncCode(String code) {
+        val resultBuilder = AuthResult.builder();
+
+        val microsoftToken = MicrosoftAPI.acquireMicrosoftAccount(this, resultBuilder, code);
+        if (microsoftToken != null) {
+            this.authenticateByMSA(resultBuilder, microsoftToken.accessToken());
+        }
+
+        return resultBuilder.build();
+    }
+
+    /**
      * Initiates the authentication process using a refresh token or an access token, handling token expiration.
      *
      * @param refreshToken The refresh token for obtaining a new access token.
@@ -121,9 +160,9 @@ public class MicrosoftAuthenticator {
      * @return A CompletableFuture containing the authentication result.
      */
     public CompletableFuture<AuthResult> asyncToken(String refreshToken, String accessToken, long expiresAt, BooleanSupplier forceRefreshToken) {
-        val resultBuilder = AuthResult.builder();
-
         return CompletableFuture.supplyAsync(() -> {
+            val resultBuilder = AuthResult.builder();
+
             var msaAccessToken = accessToken;
             var retryCount = 0;
             var shouldRefreshToken = expired(expiresAt) || forceRefreshToken.getAsBoolean();
